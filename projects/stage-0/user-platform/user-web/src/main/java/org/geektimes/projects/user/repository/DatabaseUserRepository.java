@@ -31,14 +31,10 @@ public class DatabaseUserRepository implements UserRepository {
 
     public static final String QUERY_ALL_USERS_DML_SQL = "SELECT id,name,password,email,phoneNumber FROM users";
 
-    private DBConnectionManager dbConnectionManager = null;
+    private final DBConnectionManager dbConnectionManager;
 
-    public DatabaseUserRepository() {
-        try {
-            this.dbConnectionManager = new DBConnectionManager();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    public DatabaseUserRepository(DBConnectionManager dbConnectionManager) {
+        this.dbConnectionManager = dbConnectionManager;
     }
 
     private Connection getConnection() {
@@ -47,9 +43,6 @@ public class DatabaseUserRepository implements UserRepository {
 
     @Override
     public boolean save(User user) {
-        executeUpdate(INSERT_USER_DML_SQL,e -> {
-            // 异常处理
-        },user.getName(),user.getPassword(),user.getEmail(),user.getPhoneNumber());
         return false;
     }
 
@@ -101,7 +94,6 @@ public class DatabaseUserRepository implements UserRepository {
                     // 以 id 为例，  user.setId(resultSet.getLong("id"));
                     setterMethodFromUser.invoke(user, resultValue);
                 }
-                users.add(user);
             }
             return users;
         }, e -> {
@@ -143,32 +135,6 @@ public class DatabaseUserRepository implements UserRepository {
             exceptionHandler.accept(e);
         }
         return null;
-    }
-
-    protected int executeUpdate(String sql, Consumer<Throwable> exceptionHandler, Object... args) {
-        Connection connection = getConnection();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            for (int i = 0; i < args.length; i++) {
-                Object arg = args[i];
-                Class argType = arg.getClass();
-
-                Class wrapperType = wrapperToPrimitive(argType);
-
-                if (wrapperType == null) {
-                    wrapperType = argType;
-                }
-
-                // Boolean -> boolean
-                String methodName = preparedStatementMethodMappings.get(argType);
-                Method method = PreparedStatement.class.getMethod(methodName,Integer.TYPE, wrapperType);
-                method.invoke(preparedStatement, i + 1, arg);
-            }
-            return preparedStatement.executeUpdate();
-        } catch (Throwable e) {
-            exceptionHandler.accept(e);
-        }
-        return 0;
     }
 
 

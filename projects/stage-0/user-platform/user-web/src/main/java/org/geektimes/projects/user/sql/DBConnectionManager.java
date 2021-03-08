@@ -5,10 +5,12 @@ import org.geektimes.projects.user.domain.User;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class DBConnectionManager {
 
@@ -30,17 +32,6 @@ public class DBConnectionManager {
                 throw new RuntimeException(e.getCause());
             }
         }
-    }
-
-    public DBConnectionManager() throws SQLException {
-        String databaseURL = "jdbc:derby:/Users/xiaoxiong/db/user-platform;create=true";
-        Connection connection = DriverManager.getConnection(databaseURL);
-        setConnection(connection);
-        Statement statement = connection.createStatement();
-        // 删除 users 表
-        System.out.println(statement.execute(DROP_USERS_TABLE_DDL_SQL)); // false
-        // 创建 users 表
-        System.out.println(statement.execute(CREATE_USERS_TABLE_DDL_SQL)); // false
     }
 
     public static final String DROP_USERS_TABLE_DDL_SQL = "DROP TABLE users";
@@ -69,7 +60,7 @@ public class DBConnectionManager {
 //        Driver driver = DriverManager.getDriver("jdbc:derby:/db/user-platform;create=true");
 //        Connection connection = driver.connect("jdbc:derby:/db/user-platform;create=true", new Properties());
 
-        String databaseURL = "jdbc:derby:/Users/xiaoxiong/db/user-platform;create=true";
+        String databaseURL = "jdbc:derby:/db/user-platform;create=true";
         Connection connection = DriverManager.getConnection(databaseURL);
 
         Statement statement = connection.createStatement();
