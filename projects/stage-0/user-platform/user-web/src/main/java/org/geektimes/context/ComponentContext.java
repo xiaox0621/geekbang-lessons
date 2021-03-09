@@ -25,7 +25,7 @@ public class ComponentContext {
     private static final Logger logger = Logger.getLogger(CONTEXT_NAME);
 
     private static ServletContext servletContext; // 请注意
-    // 假设一个 Tomcat JVM 进程，三个 Web Apps，会不会相互冲突？（不会冲突）
+    // 假设一个 Tomcat JVM 进程，三个 Web Apps，会不会相互冲突？（不会冲突）111
     // static 字段是 JVM 缓存吗？（是 ClassLoader 缓存）
 
 //    private static ApplicationContext applicationContext;
