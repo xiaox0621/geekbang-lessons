@@ -93,8 +93,8 @@ public class ComponentContext {
             injectComponents(component, componentClass);
             // 初始阶段 - {@link PostConstruct}
             processPostConstruct(component, componentClass);
-            // TODO 实现销毁阶段 - {@link PreDestroy}
-            processPreDestroy();
+            // TODO 实现销毁阶段 - {@link PreDestroy} 在destroy方法调用
+            //processPreDestroy();
             //将Controller类加入主Servlet的Set集合中
             processController(component);
         });
@@ -143,7 +143,23 @@ public class ComponentContext {
     }
 
     private void processPreDestroy() {
-        // TODO
+        componentsMap.values().forEach(component -> {
+            Class<?> componentClass = component.getClass();
+            Stream.of(componentClass.getMethods())
+                    .filter(method ->
+                            !Modifier.isStatic(method.getModifiers()) &&      // 非 static
+                                    method.getParameterCount() == 0 &&        // 没有参数
+                                    method.isAnnotationPresent(PreDestroy.class) // 标注 @PreDestroy
+                    ).forEach(method -> {
+                // 执行目标方法
+                try {
+                    method.invoke(component);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        });
+
     }
 
     /**
@@ -244,6 +260,7 @@ public class ComponentContext {
     }
 
     public void destroy() throws RuntimeException {
+        processPreDestroy();
         close(this.envContext);
     }
 
