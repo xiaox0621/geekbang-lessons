@@ -2,6 +2,8 @@ package org.geektimes.context;
 
 import org.geektimes.function.ThrowableAction;
 import org.geektimes.function.ThrowableFunction;
+import org.geektimes.web.mvc.FrontControllerServlet;
+import org.geektimes.web.mvc.controller.Controller;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -93,10 +95,19 @@ public class ComponentContext {
             processPostConstruct(component, componentClass);
             // TODO 实现销毁阶段 - {@link PreDestroy}
             processPreDestroy();
+            //将Controller类加入主Servlet的Set集合中
+            processController(component);
         });
     }
 
-    private void injectComponents(Object component, Class<?> componentClass) {
+    private void processController(Object component){
+        if(component instanceof Controller){
+            FrontControllerServlet.putController((Controller) component);
+        }
+
+    }
+
+   private void injectComponents(Object component, Class<?> componentClass) {
         Stream.of(componentClass.getDeclaredFields())
                 .filter(field -> {
                     int mods = field.getModifiers();

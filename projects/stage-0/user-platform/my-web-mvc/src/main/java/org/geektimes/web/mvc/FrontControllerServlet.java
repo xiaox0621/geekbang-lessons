@@ -4,19 +4,14 @@ import org.apache.commons.lang.StringUtils;
 import org.geektimes.web.mvc.controller.Controller;
 import org.geektimes.web.mvc.controller.PageController;
 import org.geektimes.web.mvc.controller.RestController;
-import org.geektimes.web.mvc.header.CacheControlHeaderWriter;
-import org.geektimes.web.mvc.header.annotation.CacheControl;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import java.io.IOException;
@@ -39,12 +34,20 @@ public class FrontControllerServlet extends HttpServlet {
      */
     private Map<String, HandlerMethodInfo> handleMethodInfoMapping = new HashMap<>();
 
+    private static Set<Controller> controllers = new HashSet<>();
+
+    public static void putController(Controller c){
+        System.out.println("put controller："+c.getClass().getName());
+        controllers.add(c);
+    }
+
     /**
      * 初始化 Servlet
      *
      * @param servletConfig
      */
     public void init(ServletConfig servletConfig) {
+        System.out.println("Servlet初始化");
         initHandleMethods();
     }
 
@@ -53,7 +56,8 @@ public class FrontControllerServlet extends HttpServlet {
      * 利用 ServiceLoader 技术（Java SPI）
      */
     private void initHandleMethods() {
-        for (Controller controller : ServiceLoader.load(Controller.class)) {
+        System.out.println("controllers 个数:"+controllers.size());
+        for (Controller controller : controllers) {
             Class<?> controllerClass = controller.getClass();
             Path pathFromClass = controllerClass.getAnnotation(Path.class);
             String requestPath = pathFromClass.value();

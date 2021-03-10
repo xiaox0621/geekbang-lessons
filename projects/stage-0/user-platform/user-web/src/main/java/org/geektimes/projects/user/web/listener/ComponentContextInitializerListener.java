@@ -19,6 +19,7 @@ public class ComponentContextInitializerListener implements ServletContextListen
         this.servletContext = sce.getServletContext();
         ComponentContext context = new ComponentContext();
         context.init(servletContext);
+        System.out.println("上下文初始化");
     }
 
     @Override
