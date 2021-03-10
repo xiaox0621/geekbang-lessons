@@ -6,6 +6,6 @@
 <body>
 <div class="container-lg">
     <!-- Content here -->
-    注册成功！！！！
+    <%=request.getAttribute("registerresult") %>
 </div>
 </body>
