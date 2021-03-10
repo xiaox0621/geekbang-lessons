@@ -5,6 +5,7 @@ import org.geektimes.projects.user.sql.LocalTransactional;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 public class UserServiceImpl implements UserService {
 
@@ -21,7 +22,11 @@ public class UserServiceImpl implements UserService {
 
         // 主调用
         try{
+            EntityTransaction transaction = entityManager.getTransaction();
+            transaction.begin();
             entityManager.persist(user);
+            transaction.commit();
+            System.out.println(entityManager.find(User.class, user.getId()));
         }catch (Exception e){
             return false;
         }

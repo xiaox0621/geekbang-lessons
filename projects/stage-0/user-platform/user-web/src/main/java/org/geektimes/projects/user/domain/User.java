@@ -18,6 +18,7 @@ import static javax.persistence.GenerationType.AUTO;
 @Table(name = "users")
 public class User implements Serializable {
 
+    //自动生成，不用校验
     @Id
     @GeneratedValue(strategy = AUTO)
     //@NotNull
